@@ -10,11 +10,11 @@
           <div class="card user-card">
             <div class="card-inner">
               <div class="image-wrapper">
-                <img src="{{ follower.header_image_url }}" alt="" class="card-hero">
+                <img src="{{ follower.header_img }}" alt="Banner image for {{ follower.username }}" class="card-hero">
               </div>
               <div class="card-contents">
                 <a href="/users/{{ follower.id }}" class="card-link">
-                  <img src="{{ follower.image_url }}" alt="Image for {{ follower.username }}" class="card-image">
+                  <img src="{{ follower.profile_img }}" alt="Profile image for {{ follower.username }}" class="card-image">
                   <p>@{{ follower.username }}</p>
                 </a>
 

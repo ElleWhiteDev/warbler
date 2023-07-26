@@ -7,18 +7,32 @@
   <div class="row justify-content-md-center">
   <div class="col-md-7 col-lg-5">
     <h2 class="join-message">Join Warbler today.</h2>
-    <form method="POST" id="user_form">
-      {{ form.hidden_tag() }}
+<form method="POST" enctype="multipart/form-data" id="user_form">
+    {{ form.hidden_tag() }}
 
-      {% for field in form if field.widget.input_type != 'hidden' %}
-        {% for error in field.errors %}
-          <span class="text-danger">{{ error }}</span>
-        {% endfor %}
-        {{ field(placeholder=field.label.text, class="form-control") }}
-      {% endfor %}
+    {% for field in form if field.widget.input_type != 'hidden' %}
+        {% if field.name == 'profile_img' %}
+            <div class="input-wrapper" style="margin-bottom: 20px;">
+                <input type="file" id="profile_img" name="profile_img" style="display:none">
+                <input type="text" id="profile_img_placeholder" placeholder="Upload Profile Image" disabled>
+                <button type="button" onclick="document.getElementById('profile_img').click()">Choose File</button>
+            </div>
+            <script>
+                document.getElementById('profile_img').addEventListener('change', function() {
+                    document.getElementById('profile_img_placeholder').value = this.files[0].name;
+                });
+            </script>
+        {% else %}
+            {% for error in field.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+            {{ field(placeholder=field.label.text, class="form-control") }}
+        {% endif %}
+    {% endfor %}
 
-      <button class="btn btn-primary btn-lg btn-block">Sign me up!</button>
-    </form>
+    <button class="btn btn-primary btn-lg btn-block">Sign me up!</button>
+</form>
+
   </div>
 </div>
 

@@ -1,8 +1,10 @@
 import os
+import re
 
-from flask import Flask, render_template, request, flash, redirect, session, g
+from flask import Flask, render_template, request, flash, redirect, session, g, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
+from flask_bcrypt import Bcrypt
 
 from forms import UserAddForm, LoginForm, MessageForm, EditUserForm
 from models import db, connect_db, User, Message
@@ -10,6 +12,7 @@ from models import db, connect_db, User, Message
 CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
@@ -21,6 +24,7 @@ app.config['SQLALCHEMY_ECHO'] = False
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
 toolbar = DebugToolbarExtension(app)
+app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static/uploads')
 
 app.app_context().push()
 connect_db(app)
@@ -62,32 +66,57 @@ def signup():
 
     If form not valid, present form.
 
-    If the there already is a user with that username: flash message
+    If there there already is a user with that username: flash message
     and re-present form.
     """
 
     form = UserAddForm()
 
+    print(form.errors)
+
     if form.validate_on_submit():
         try:
+            profile_img_file = request.files.get('profile_img')
+            profile_img_url = request.form.get('profile_img_url')
+            profile_img = User.profile_img.default.arg
+
+            if profile_img_file and profile_img_file.filename != '':
+                profile_img_file.save(os.path.join(app.config['UPLOAD_FOLDER'], profile_img_file.filename))
+                profile_img = url_for('static', filename='uploads/' + profile_img_file.filename)
+
+            elif profile_img_url:
+                if not re.search(r'(.jpg|.png|.svg)$', profile_img_url):
+                    flash("Invalid URL! Please provide a URL that ends with .jpg, .png, or .svg", 'danger')
+                    return render_template('users/signup.html', form=form)
+                profile_img = profile_img_url
+
             user = User.signup(
-                username=form.username.data,
+                username=form.username.data.strip(),
                 password=form.password.data,
-                email=form.email.data,
-                image_url=form.image_url.data or User.image_url.default.arg,
+                email=form.email.data.strip(),
+                profile_img=profile_img,
             )
+
+            db.session.add(user)
             db.session.commit()
 
-        except IntegrityError:
-            flash("Username already taken", 'danger')
+        except IntegrityError as e:
+            if "users_email_key" in str(e.orig):
+                flash("Email already taken", 'danger')
+            elif "users_username_key" in str(e.orig):
+                flash("Username already taken", 'danger')
+            else:
+                flash("An error occurred. Please try again.", 'danger')
             return render_template('users/signup.html', form=form)
 
         do_login(user)
 
-        return redirect("/")
+        return redirect('/')
 
     else:
         return render_template('users/signup.html', form=form)
+
+
 
 
 @app.route('/login', methods=["GET", "POST"])
@@ -223,13 +252,34 @@ def profile(user_id):
     form = EditUserForm(obj=user)
 
     if form.validate_on_submit():
-        form.populate_obj(user)
+        if User.authenticate(user.username, form.password.data):
+            images = ['profile_img', 'header_img']
+            for img in images:
+                img_file = request.files.get(img)
+                img_url = request.form.get(f'{img}_url')
 
-        db.session.commit()
+                if img_file and img_file.filename != '':
+                    img_file.save(os.path.join(app.config['UPLOAD_FOLDER'], img_file.filename))
+                    setattr(user, img, url_for('static', filename='uploads/' + img_file.filename))
+                elif img_url:
+                    if not re.search(r'(.jpg|.png|.svg)$', img_url):
+                        flash(f"Invalid URL for {img}! Please provide a URL that ends with .jpg, .png, or .svg", 'danger')
+                        return render_template('users/edit.html', form=form, user=user)
+                    setattr(user, img, img_url)
 
-        return redirect('/users/<int:user_id>')
+                user.email = form.email.data
+                user.bio = form.bio.data
+
+                if form.password.data:
+                    user.password = bcrypt.generate_password_hash(form.password.data).decode('UTF-8')
+
+            db.session.commit()
+            return redirect(f'/users/{user_id}')
+        else:
+            flash("Wrong password, please try again.", "danger")
 
     return render_template('users/edit.html', form=form, user=user)
+
 
 @app.route('/users/delete', methods=["POST"])
 def delete_user():

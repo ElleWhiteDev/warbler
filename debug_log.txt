@@ -1,1 +1,55 @@
 banner scale
+
+{% extends 'base.html' %}
+
+{% block body_class %}onboarding{% endblock %}
+
+{% block content %}
+
+  <div class="row justify-content-md-center">
+  <div class="col-md-7 col-lg-5">
+    <h2 class="join-message">Join Warbler today.</h2>
+<form method="POST" enctype="multipart/form-data" id="user_form">
+    {{ form.hidden_tag() }}
+
+    {% for field in form if field.widget.input_type != 'hidden' %}
+        {% if field.name == 'profile_img' %}
+            <label for="profile_img">Profile Image</label>
+            <div class="input-wrapper">
+                <input type="file" id="profile_img" name="profile_img" style="display:none">
+                <input type="text" id="profile_img_placeholder" placeholder="Profile Image" disabled>
+                <button type="button" onclick="document.getElementById('profile_img').click()">Choose File</button>
+            </div>
+            <script>
+                document.getElementById('profile_img').addEventListener('change', function() {
+                    document.getElementById('profile_img_placeholder').value = this.files[0].name;
+                });
+            </script>
+        {% else %}
+        {% if field.name == 'header_img' %}
+            <label for="profile_img">Profile Image</label>
+            <div class="input-wrapper">
+                <input type="file" id="header_img" name="header_img" style="display:none">
+                <input type="text" id="header_img_placeholder" placeholder="Banner Picture" disabled>
+                <button type="button" onclick="document.getElementById('profile_img').click()">Choose File</button>
+            </div>
+            <script>
+                document.getElementById('profile_img').addEventListener('change', function() {
+                    document.getElementById('profile_img_placeholder').value = this.files[0].name;
+                });
+            </script>
+        {% else %}
+            {% for error in field.errors %}
+                <span class="text-danger">{{ error }}</span>
+            {% endfor %}
+            {{ field(placeholder=field.label.text, class="form-control") }}
+        {% endif %}
+    {% endfor %}
+
+    <button class="btn btn-primary btn-lg btn-block">Sign me up!</button>
+</form>
+
+  </div>
+</div>
+
+{% endblock %}
