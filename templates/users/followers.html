@@ -24,7 +24,7 @@
                     <button class="btn btn-primary btn-sm">Unfollow</button>
                   </form>
                 {% else %}
-                  <form method="POST" action="{{url_for('add_follow', follow_id-follower.id)}}">
+                  <form method="POST" action="{{url_for('add_follow', follow_id=follower.id)}}">
                     <button class="btn btn-outline-primary btn-sm">Follow</button>
                   </form>
                 {% endif %}

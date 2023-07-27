@@ -8,7 +8,7 @@ from flask_bcrypt import Bcrypt
 from functools import wraps
 
 from forms import UserAddForm, LoginForm, MessageForm, EditUserForm, ChangePasswordForm
-from models import db, connect_db, User, Message
+from models import db, connect_db, User, Message, Follows
 
 CURR_USER_KEY = "curr_user"
 
@@ -264,12 +264,14 @@ def profile():
 
                 user.email = form.email.data
                 user.bio = form.bio.data
+                user.location = request.form.get('location')
 
                 if form.password.data:
                     user.password = bcrypt.generate_password_hash(form.password.data).decode('UTF-8')
 
             db.session.commit()
-            return redirect(url_for('profile'))
+            flash("Profile Updated", 'success')
+            return redirect(url_for('users_show', user_id=user.id))
         else:
             flash("Wrong password, please try again.", "danger")
 
@@ -369,8 +371,16 @@ def homepage():
     """
 
     if g.user:
+        user = g.user
+
+        following_ids = db.session.query(Follows.user_being_followed_id).filter(Follows.user_following_id == user.id).all()
+        following_ids_list = [id for id, in following_ids]
+
+        following_ids_list.append(user.id)
+
         messages = (Message
                     .query
+                    .filter(Message.user_id.in_(following_ids_list))
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())

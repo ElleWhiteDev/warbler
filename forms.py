@@ -46,6 +46,7 @@ class EditUserForm(FlaskForm):
     header_img = FileField('(Optional) Banner Picture', validators=[FileAllowed(['jpg', 'png'])])
     header_img_url = StringField('Or Provide A Banner Image URL', validators=[Optional(), validate_image_url])
     bio = TextAreaField('(Optional) Bio', validators=[Optional(), Length(max=200)])
+    location = StringField('Location')
     password = PasswordField('Current Password', validators=[DataRequired()])
 
 

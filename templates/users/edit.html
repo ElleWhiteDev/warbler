@@ -6,51 +6,26 @@
     <div class="col-md-5">
       <h2 class="join-message">Edit Your Profile.</h2>
       <form method="POST" enctype="multipart/form-data" id="user_form">
-    {{ form.hidden_tag() }}
+        {{ form.hidden_tag() }}
 
-    {% for field in form if field.widget.input_type != 'hidden' and field.name != 'password' %}
-        {% if field.name == 'profile_img' %}
-            <label for="profile_img">Profile Image</label>
-            <div class="input-wrapper" style="margin-bottom: 20px;">
-                <input type="file" id="profile_img" name="profile_img" style="display:none">
-                <input type="text" id="profile_img_placeholder" placeholder="Upload Profile Image" disabled>
-                <button type="button" onclick="document.getElementById('profile_img').click()">Choose File</button>
-            </div>
-            <script>
-                document.getElementById('profile_img').addEventListener('change', function() {
-                    document.getElementById('profile_img_placeholder').value = this.files[0].name;
-                });
-            </script>
-        {% elif field.name == 'header_img' %}
-            <label for="header_img">Banner Image</label>
-            <div class="input-wrapper" style="margin-bottom: 20px;">
-                <input type="file" id="header_img" name="header_img" style="display:none">
-                <input type="text" id="header_img_placeholder" placeholder="Upload Banner Image" disabled>
-                <button type="button" onclick="document.getElementById('header_img').click()">Choose File</button>
-            </div>
-            <script>
-                document.getElementById('header_img').addEventListener('change', function() {
-                    document.getElementById('header_img_placeholder').value = this.files[0].name;
-                });
-            </script>
-        {% else %}
+        {% for field in form if field.widget.input_type != 'hidden' and field.name != 'password' %}
+          {% if field.errors %}
             {% for error in field.errors %}
-                <span class="text-danger">{{ error }}</span>
+              <span class="text-danger">{{ error }}</span>
             {% endfor %}
-            {{ field(placeholder=field.label.text, class="form-control") }}
-        {% endif %}
-    {% endfor %}
-
-    <p>To confirm changes, enter your password:</p>
-    {% if form.password.errors %}
-        {% for error in form.password.errors %}
-            <span class="text-danger">
-                {{ error }}
-            </span>
+          {% endif %}
+          {{ field(placeholder=field.label.text, class="form-control") }}
         {% endfor %}
-    {% endif %}
-    {{ form.password(placeholder="Enter your password to confirm", class="form-control") }}
 
+        <p>To confirm changes, enter your password:</p>
+        {% if form.password.errors %}
+          {% for error in form.password.errors %}
+            <span class="text-danger">
+              {{ error }}
+            </span>
+          {% endfor %}
+        {% endif %}
+        {{ form.password(placeholder="Enter your password to confirm", class="form-control") }}
 
         <div class="edit-btn-area">
           <button class="btn btn-success">Edit User</button>
@@ -61,4 +36,6 @@
     </div>
   </div>
 
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBR9QdLLp0MFPv-T7FsHEujCvej-6V5qOc&libraries=places"></script>
+  <script src="{{ url_for('static', filename='main.js') }}"></script>
 {% endblock %}
