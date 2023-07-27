@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container text-center">
+        <h1 class="mt-5">500 - Internal Server Error</h1>
+        <img src="{{ url_for('static', filename='images/error_robot.jpg') }}" alt="Robot with sparks flying" class="img-fluid mt-4">
+        <p class="mt-4">Oh no, it seems like our server had a little hiccup.</p>
+        <p>Don't worry though, our friendly repair bot is on the case.</p>
+        <a href="{{ url_for('homepage') }}" class="btn btn-primary mt-4">Back to safety!</a>
+    </div>
+{% endblock %}
