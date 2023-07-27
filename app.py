@@ -83,7 +83,6 @@ def signup():
             if profile_img_file and profile_img_file.filename != '':
                 profile_img_file.save(os.path.join(app.config['UPLOAD_FOLDER'], profile_img_file.filename))
                 profile_img = url_for('static', filename='uploads/' + profile_img_file.filename)
-
             elif profile_img_url:
                 if not re.search(r'(.jpg|.png|.svg)$', profile_img_url):
                     flash("Invalid URL! Please provide a URL that ends with .jpg, .png, or .svg", 'danger')
