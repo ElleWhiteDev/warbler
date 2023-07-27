@@ -130,6 +130,13 @@ class User(db.Model):
         found_user_list = [user for user in self.following if user == other_user]
         return len(found_user_list) == 1
 
+    def change_password(self, current_password, new_password, new_password_confirm):
+        if not bcrypt.check_password_hash(self.password, current_password):
+            raise ValueError("Current password is incorrect.")
+        if new_password != new_password_confirm:
+            raise ValueError("New passwords do not match.")
+        self.password = bcrypt.generate_password_hash(new_password).decode('UTF-8')
+
     @classmethod
     def signup(cls, username, email, password, profile_img):
         """Sign up user.

@@ -53,7 +53,8 @@
 
 
         <div class="edit-btn-area">
-          <button class="btn btn-success">Edit this user!</button>
+          <button class="btn btn-success">Edit User</button>
+          <a href="{{url_for('change_password')}}" class="btn btn-primary">Change Password</a>
           <a href="{{url_for('users_show', user_id=g.user.id)}}" class="btn btn-outline-secondary">Cancel</a>
         </div>
       </form>

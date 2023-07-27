@@ -2,7 +2,7 @@ import re
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, TextAreaField, ValidationError
-from wtforms.validators import DataRequired, Email, Length, Optional
+from wtforms.validators import DataRequired, Email, Length, Optional, EqualTo
 from flask_wtf.file import FileField, FileAllowed
 
 
@@ -47,3 +47,9 @@ class EditUserForm(FlaskForm):
     header_img_url = StringField('Or Provide A Banner Image URL', validators=[Optional(), validate_image_url])
     bio = TextAreaField('(Optional) Bio', validators=[Optional(), Length(max=200)])
     password = PasswordField('Current Password', validators=[DataRequired()])
+
+
+class ChangePasswordForm(FlaskForm):
+    current_password = PasswordField('Current Password', validators=[DataRequired()])
+    new_password = PasswordField('New Password', validators=[DataRequired(), EqualTo('confirm', message='Passwords must match')])
+    confirm = PasswordField('Repeat Password')

@@ -5,9 +5,9 @@ from flask import Flask, render_template, request, flash, redirect, session, g, 
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from flask_bcrypt import Bcrypt
-from functools import wrapps
+from functools import wraps
 
-from forms import UserAddForm, LoginForm, MessageForm, EditUserForm
+from forms import UserAddForm, LoginForm, MessageForm, EditUserForm, ChangePasswordForm
 from models import db, connect_db, User, Message
 
 CURR_USER_KEY = "curr_user"
@@ -35,7 +35,7 @@ def require_login(func):
     """Check user is logged in"""
     @wraps(func)
     def wrapper(*args, **kwargs):
-        if 'user_id' not in session:
+        if CURR_USER_KEY not in session:
             flash('You must be logged in to view this page!', 'danger')
             return redirect(url_for('login'))
         return func(*args, **kwargs)
@@ -238,12 +238,12 @@ def stop_following(follow_id):
     return redirect(url_for('show_following', user_id=g.user.id))
 
 
-@app.route('/users/profile/<int:user_id>', methods=["GET", "POST"])
+@app.route('/users//profile', methods=["GET", "POST"])
 @require_login
-def profile(user_id):
+def profile():
     """Update profile for current user."""
 
-    user = User.query.get_or_404(user_id)
+    user = g.user
     form = EditUserForm(obj=user)
 
     if form.validate_on_submit():
@@ -269,11 +269,31 @@ def profile(user_id):
                     user.password = bcrypt.generate_password_hash(form.password.data).decode('UTF-8')
 
             db.session.commit()
-            return redirect(url_for('profile', user_id=g.user.id))
+            return redirect(url_for('profile'))
         else:
             flash("Wrong password, please try again.", "danger")
 
     return render_template('users/edit.html', form=form, user=user)
+
+@app.route('/change_password', methods=['GET', 'POST'])
+@require_login
+def change_password():
+    """Change user password"""
+    
+    user = g.user
+    form = ChangePasswordForm()
+
+    if form.validate_on_submit():
+        try:
+            user.change_password(form.current_password.data, form.new_password.data, form.confirm.data)
+            db.session.commit()
+            flash('Password changed successfully', 'success')
+            return redirect(url_for('users_show', user_id=user.id))
+        except ValueError as e:
+            flash(str(e), 'error')
+            return render_template('change_password.html', form=form)
+    return render_template('users/change_password.html', form=form)
+
 
 
 @app.route('/users/delete', methods=["POST"])
