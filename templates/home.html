@@ -52,15 +52,20 @@
               <p>{{ msg.text }}</p>
             </div>
             {% if g.user and msg in g.user.likes %}
-                <form method="POST" action="{{ url_for('add_like', message_id=msg.id) }}" id="messages-form">
-                    <button class="btn btn-link"><i class="fas fa-thumbs-up"></i></button>
-                </form>
+              <form method="POST" action="{{ url_for('add_like', message_id=msg.id) }}" id="messages-form">
+                  <button class="btn btn-link"><i class="fas fa-thumbs-up"></i></button>
+              </form>
             {% elif g.user %}
-                <form method="POST" action="{{ url_for('add_like', message_id=msg.id) }}" id="messages-form">
-                    <button class="btn btn-link"><i class="far fa-thumbs-up"></i></button>
-                </form>
+              <form method="POST" action="{{ url_for('add_like', message_id=msg.id) }}" id="messages-form">
+                  <button class="btn btn-link"><i class="far fa-thumbs-up"></i></button>
+              </form>
             {% endif %}
           </li>
+        {% else %}
+        <div class="text-center">
+          <h3>No messages yet!</h3>
+          <h4>Follow users to see their warbles here!</h4>
+          <a href="{{url_for('list_users')}}" class="btn btn-outline-success btn-block">View All Users</a>
         {% endfor %}
       </ul>
     </div>

@@ -368,7 +368,7 @@ def add_like(message_id):
 
     db.session.commit()
 
-    return redirect(url_for('messages_show', message_id=message_id))
+    return redirect(request.referrer or url_for('messages_show', message_id=message_id))
 
 
 
