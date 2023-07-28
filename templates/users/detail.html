@@ -63,23 +63,7 @@
   </div>
 
   {% block user_details %}
-    {% for message in user.messages %}
-      <div class="message">
-          <p>{{ message.text }}</p>
-          
-          {% if g.user and user.id != message.user.id %}
-              {% if message in g.user.likes %}
-                  <form method="POST" action="{{ url_for('add_like', message_id=message.id) }}">
-                      <button class="btn btn-link"><i class="fas fa-thumbs-up"></i></button>
-                  </form>
-              {% else %}
-                  <form method="POST" action="{{ url_for('add_like', message_id=message.id) }}">
-                      <button class="btn btn-link"><i class="far fa-thumbs-up"></i></button>
-                  </form>
-              {% endif %}
-          {% endif %}
-      </div>
-    {% endfor %}
+
   {% endblock %}
 
 </div>

@@ -2,25 +2,33 @@
 {% block user_details %}
   <div class="col-sm-6">
     <ul class="list-group" id="messages">
-
       {% for message in messages %}
-
         <li class="list-group-item">
-          <a href="{{url_for('messages_show', message_id=message.id)}}"class="message-link"/>
-
-          <a href="{{url_for('users_show', user_id=user.id)}}">
-            <img src="{{ user.profile_img }}" alt="user image" class="timeline-image">
-          </a>
-
-          <div class="message-area">
-            <a href="{{url_for('messages_show', message_id=message.id)}}">@{{ user.username }}</a>
-            <span class="text-muted">{{ message.timestamp.strftime('%d %B %Y') }}</span>
-            <p>{{ message.text }}</p>
+          <div class="message-container">
+            <a href="{{url_for('users_show', user_id=user.id)}}">
+              <img src="{{ user.profile_img }}" alt="user image" class="timeline-image">
+            </a>
+            <div class="message-area">
+              <a href="{{url_for('messages_show', message_id=message.id)}}">@{{ user.username }}</a>
+              <span class="text-muted">{{ message.timestamp.strftime('%d %B %Y') }}</span>
+              <p>{{ message.text }}</p>
+            </div>
           </div>
+          {% if g.user is not none and g.user.id != message.user.id %}
+            <div class="like-button">
+              {% if message in g.user.likes %}
+                <form method="POST" action="{{ url_for('add_like', message_id=message.id) }}">
+                    <button class="btn btn-link"><i class="fas fa-thumbs-up"></i></button>
+                </form>
+              {% else %}
+                <form method="POST" action="{{ url_for('add_like', message_id=message.id) }}">
+                    <button class="btn btn-link"><i class="far fa-thumbs-up"></i></button>
+                </form>
+              {% endif %}
+            </div>
+          {% endif %}
         </li>
-
       {% endfor %}
-
     </ul>
   </div>
 {% endblock %}

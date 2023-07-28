@@ -196,8 +196,14 @@ nav + .container {
   margin-left: 10px;
 }
 
-.btn-spacing {
-  margin-right: 10px;
+.message-container {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.like-button {
+  margin-left: 10px;
 }
 
 #warbler-hero {
