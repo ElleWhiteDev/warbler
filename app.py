@@ -237,6 +237,14 @@ def stop_following(follow_id):
 
     return redirect(url_for('show_following', user_id=g.user.id))
 
+@app.route('/users/<int:user_id>/likes')
+@require_login
+def show_likes(user_id):
+    """Show list of user likes."""
+
+    user = User.query.get_or_404(user_id)
+    return render_template('users/likes.html', user=user)
+
 
 @app.route('/users//profile', methods=["GET", "POST"])
 @require_login

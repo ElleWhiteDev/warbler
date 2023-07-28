@@ -28,19 +28,21 @@
           </li>
           <li class="stat">
             <p class="small">Likes</p>
-            <h4>{{ user.likes | length }}</h4>
+            <h4>
+              <a href="{{url_for('show_likes', user_id=user.id)}}">{{ user.likes | length }}</a>
+            </h4>
           </li>
           <div class="ml-auto">
             {% if g.user.id == user.id %}
-            <a href="{{url_for('profile')}}" class="btn btn-outline-secondary btn-spacing">Edit Profile</a>
+            <a href="{{url_for('profile')}}" class="btn btn-outline-secondary">Edit Profile</a>
             <form method="POST" action="{{url_for('delete_user')}}" class="form-inline">
-              <button class="btn btn-outline-danger ml-2 btn-spacing">Delete Profile</button>
+              <button class="btn btn-outline-danger ml-2">Delete Profile</button>
             </form>
-            <a href="{{url_for('list_users')}}" class="btn btn-outline-success btn-spacing">View Users</a>
+            <a href="{{url_for('list_users')}}" class="btn btn-outline-success">View Users</a>
             {% elif g.user %}
             {% if g.user.is_following(user) %}
             <form method="POST" action="{{url_for('users_show', user_id=user.id)}}">
-              <button class="btn btn-primary btn-spacing">Unfollow</button>
+              <button class="btn btn-primary">Unfollow</button>
             </form>
             {% else %}
             <form method="POST" action="{{url_for('add_follow', follow_id=user.id)}}">

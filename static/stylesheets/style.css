@@ -196,16 +196,6 @@ nav + .container {
   margin-left: 10px;
 }
 
-.message-container {
-  display: flex;
-  align-items: center;
-  flex-grow: 1;
-}
-
-.like-button {
-  margin-left: 10px;
-}
-
 #warbler-hero {
   height: 360px;
   margin-top: -16px;
@@ -241,6 +231,7 @@ nav + .container {
 .user-stats > .ml-auto .btn {
   min-width: 105px;
   padding: 6px 16px;
+  margin-right: 10px;
 }
 
 .stat {
@@ -291,6 +282,16 @@ nav + .container {
 
 #messages:not(.no-hover) .list-group-item:hover {
   background-color: #e6ecf0;
+}
+
+.message-container {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.like-button {
+  margin-left: 10px;
 }
 
 #sidebar-username {
