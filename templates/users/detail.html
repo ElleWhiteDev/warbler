@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div id="warbler-hero" class="full-width"></div>
+<div id="warbler-hero" class="full-width">{{ user.header_img }}</div>
 <img src="{{ user.profile_img }}" alt="Image for {{ user.username }}" id="profile-avatar">
 <div class="row full-width">
   <div class="container">
@@ -28,22 +28,23 @@
           </li>
           <li class="stat">
             <p class="small">Likes</p>
-            <h4>TBD</h4>
+            <h4>{{ user.likes | length }}</h4>
           </li>
           <div class="ml-auto">
             {% if g.user.id == user.id %}
-            <a href="{{url_for('profile')}}" class="btn btn-outline-secondary">Edit Profile</a>
+            <a href="{{url_for('profile')}}" class="btn btn-outline-secondary btn-spacing">Edit Profile</a>
             <form method="POST" action="{{url_for('delete_user')}}" class="form-inline">
-              <button class="btn btn-outline-danger ml-2">Delete Profile</button>
+              <button class="btn btn-outline-danger ml-2 btn-spacing">Delete Profile</button>
             </form>
+            <a href="{{url_for('list_users')}}" class="btn btn-outline-success btn-spacing">View Users</a>
             {% elif g.user %}
             {% if g.user.is_following(user) %}
             <form method="POST" action="{{url_for('users_show', user_id=user.id)}}">
-              <button class="btn btn-primary">Unfollow</button>
+              <button class="btn btn-primary btn-spacing">Unfollow</button>
             </form>
             {% else %}
             <form method="POST" action="{{url_for('add_follow', follow_id=user.id)}}">
-              <button class="btn btn-outline-primary">Follow</button>
+              <button class="btn btn-outline-primary btn-spacing">Follow</button>
             </form>
             {% endif %}
             {% endif %}
@@ -58,10 +59,27 @@
   <div class="col-sm-3">
     <h4 id="sidebar-username">@{{ user.username }}</h4>
     <p>{{ user.bio }}</p>
-    <p class="user-location"><span class="fa fa-map-marker"></span>{{ user.location }}</p>
+    <p class="user-location"><span class="fa fa-map-marker"></span>    {{ user.location }}</p>
   </div>
 
   {% block user_details %}
+    {% for message in user.messages %}
+      <div class="message">
+          <p>{{ message.text }}</p>
+          
+          {% if g.user and user.id != message.user.id %}
+              {% if message in g.user.likes %}
+                  <form method="POST" action="{{ url_for('add_like', message_id=message.id) }}">
+                      <button class="btn btn-link"><i class="fas fa-thumbs-up"></i></button>
+                  </form>
+              {% else %}
+                  <form method="POST" action="{{ url_for('add_like', message_id=message.id) }}">
+                      <button class="btn btn-link"><i class="far fa-thumbs-up"></i></button>
+                  </form>
+              {% endif %}
+          {% endif %}
+      </div>
+    {% endfor %}
   {% endblock %}
 
 </div>

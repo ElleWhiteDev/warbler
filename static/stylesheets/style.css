@@ -196,13 +196,16 @@ nav + .container {
   margin-left: 10px;
 }
 
+.btn-spacing {
+  margin-right: 10px;
+}
+
 #warbler-hero {
   height: 360px;
   margin-top: -16px;
   opacity: 0.7;
   background-size: cover;
   background-position: top center;
-  background-image: url('{{ user.header_img }}'); 
 }
 
 .full-width {
@@ -500,13 +503,14 @@ p.card-bio {
 
 #messages.no-hover .message-heading {
   display: flex;
-  justify-content: space-between;
+  justify-content: left;
   height: 47px;
   margin-top: 3px;
 }
 
 #messages.no-hover .message-heading .btn {
   min-width: 105px;
+  margin-left: 10px;
 }
 
 #messages-form {

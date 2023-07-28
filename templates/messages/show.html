@@ -31,7 +31,19 @@
                 {% endif %}
               {% endif %}
             </div>
-            <p class="single-message">{{ message.text }}</p>
+            <p class="single-message">{{ message.text }}
+            {% if g.user and g.user.id != message.user.id %}
+                {% if message in g.user.likes %}
+                    <form method="POST" action="{{ url_for('add_like', message_id=message.id) }}" id="messages-form">
+                        <button class="btn btn-link"><i class="fas fa-thumbs-up"></i></button>
+                    </form>
+                {% else %}
+                    <form method="POST" action="{{ url_for('add_like', message_id=message.id) }}" id="messages-form">
+                        <button class="btn btn-link"><i class="far fa-thumbs-up"></i></button>
+                    </form>
+                {% endif %}
+            {% endif %}
+            </p>
             <span class="text-muted">{{ message.timestamp.strftime('%d %B %Y') }}</span>
           </div>
         </li>

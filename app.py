@@ -8,7 +8,7 @@ from flask_bcrypt import Bcrypt
 from functools import wraps
 
 from forms import UserAddForm, LoginForm, MessageForm, EditUserForm, ChangePasswordForm
-from models import db, connect_db, User, Message, Follows
+from models import db, connect_db, User, Message, Follows, Likes
 
 CURR_USER_KEY = "curr_user"
 
@@ -223,7 +223,7 @@ def add_follow(follow_id):
     g.user.following.append(followed_user)
     db.session.commit()
 
-    return redirect(url_for('show_following', user_id=g.user.id))
+    return redirect(request.referrer or url_for('show_following', user_id=g.user.id))
 
 
 @app.route('/users/stop-following/<int:follow_id>', methods=['POST'])
@@ -344,6 +344,24 @@ def messages_show(message_id):
 
     msg = Message.query.get(message_id)
     return render_template('messages/show.html', message=msg)
+
+
+@app.route('/messages/<int:message_id>/like', methods=['POST'])
+@require_login
+def add_like(message_id):
+    """Toggle a liked message for the currently-logged-in user."""
+
+    msg = Message.query.get_or_404(message_id)
+
+    if msg in g.user.likes:
+        g.user.likes.remove(msg)
+    else:
+        g.user.likes.append(msg)
+
+    db.session.commit()
+
+    return redirect(url_for('messages_show', message_id=message_id))
+
 
 
 @app.route('/messages/<int:message_id>/delete', methods=["POST"])
