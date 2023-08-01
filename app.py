@@ -2,7 +2,6 @@ import os
 import re
 
 from flask import Flask, render_template, request, flash, redirect, session, g, url_for
-from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from flask_bcrypt import Bcrypt
 from functools import wraps
@@ -18,13 +17,11 @@ bcrypt = Bcrypt(app)
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    os.environ.get('DATABASE_URL', 'postgresql:///warbler'))
+os.environ.get('DATABASE_URL', 'postgresql:///warbler'))
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
-app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
-toolbar = DebugToolbarExtension(app)
 app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static/uploads')
 
 app.app_context().push()
@@ -221,7 +218,12 @@ def add_follow(follow_id):
 
     followed_user = User.query.get_or_404(follow_id)
     g.user.following.append(followed_user)
-    db.session.commit()
+
+    try: 
+        db.session.commit()
+    except IntegrityError as e:
+        flash("Already Following User", 'danger')
+        db.session.rollback()
 
     return redirect(request.referrer or url_for('show_following', user_id=g.user.id))
 
@@ -233,7 +235,12 @@ def stop_following(follow_id):
 
     followed_user = User.query.get(follow_id)
     g.user.following.remove(followed_user)
-    db.session.commit()
+
+    try: 
+        db.session.commit()
+    except IntegrityError as e:
+        flash("Not Currently Following User", 'danger')
+        db.session.rollback()
 
     return redirect(url_for('show_following', user_id=g.user.id))
 
@@ -366,7 +373,10 @@ def add_like(message_id):
     else:
         g.user.likes.append(msg)
 
-    db.session.commit()
+    try: 
+        db.session.commit()
+    except IntegrityError as e:
+        db.session.rollback()
 
     return redirect(request.referrer or url_for('messages_show', message_id=message_id))
 

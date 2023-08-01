@@ -2,7 +2,7 @@
 {% block user_details %}
 <div class="col-sm-6">
     <ul class="list-group" id="messages">
-      {% for message in user.messages %}
+      {% for message in user.likes %}
         <li class="list-group-item">
           <div class="message-container">
             <a href="{{url_for('users_show', user_id=user.id)}}">
