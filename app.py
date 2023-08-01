@@ -7,7 +7,9 @@ from flask_bcrypt import Bcrypt
 from functools import wraps
 
 from forms import UserAddForm, LoginForm, MessageForm, EditUserForm, ChangePasswordForm
-from models import db, connect_db, User, Message, Follows, Likes
+from models import db, connect_db, User, Message, Follows
+from secret import GOOGLE_API_KEY
+
 
 CURR_USER_KEY = "curr_user"
 
@@ -291,7 +293,7 @@ def profile():
         else:
             flash("Wrong password, please try again.", "danger")
 
-    return render_template('users/edit.html', form=form, user=user)
+    return render_template('users/edit.html', form=form, user=user, GOOGLE_API_KEY=GOOGLE_API_KEY)
 
 @app.route('/change_password', methods=['GET', 'POST'])
 @require_login
