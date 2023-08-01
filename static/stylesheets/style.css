@@ -197,11 +197,22 @@ nav + .container {
 }
 
 #warbler-hero {
-  height: 360px;
-  margin-top: -16px;
-  opacity: 0.7;
-  background-size: cover;
-  background-position: top center;
+  display: flex;
+  justify-content: center; /* Align horizontally in the center */
+  align-items: center; /* Align vertically in the center */
+  overflow: hidden; /* Ensure that child elements do not break the boundary */
+  position: relative; /* Child absolute positioning is relative to this */
+}
+
+#warbler-hero img {
+  position: absolute;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50)
 }
 
 .full-width {

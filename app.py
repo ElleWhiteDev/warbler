@@ -2,7 +2,7 @@ import os
 import re
 
 from flask import Flask, render_template, request, flash, redirect, session, g, url_for
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from flask_bcrypt import Bcrypt
 from functools import wraps
 
@@ -16,8 +16,9 @@ bcrypt = Bcrypt(app)
 
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
-app.config['SQLALCHEMY_DATABASE_URI'] = (
-os.environ.get('DATABASE_URL', 'postgresql:///warbler'))
+app.config['SQLALCHEMY_DATABASE_URI'] = (os.environ.get('DATABASE_URL', 'postgresql:///warbler'))
+# os.environ.get('DATABASE_URL', 'postgresql://super:koneko13@ellewhitedev-13362.postgres.pythonanywhere-services.com/warbler'))
+
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = False
@@ -221,7 +222,7 @@ def add_follow(follow_id):
 
     try: 
         db.session.commit()
-    except IntegrityError as e:
+    except SQLAlchemyError as e:
         flash("Already Following User", 'danger')
         db.session.rollback()
 
@@ -238,7 +239,7 @@ def stop_following(follow_id):
 
     try: 
         db.session.commit()
-    except IntegrityError as e:
+    except SQLAlchemyError as e:
         flash("Not Currently Following User", 'danger')
         db.session.rollback()
 
@@ -375,7 +376,7 @@ def add_like(message_id):
 
     try: 
         db.session.commit()
-    except IntegrityError as e:
+    except SQLAlchemyError as e:
         db.session.rollback()
 
     return redirect(request.referrer or url_for('messages_show', message_id=message_id))
@@ -421,7 +422,7 @@ def homepage():
                     .limit(100)
                     .all())
 
-        return render_template('home.html', messages=messages)
+        return render_template('home.html', messages=messages, user=g.user)
 
     else:
         return render_template('home-anon.html')

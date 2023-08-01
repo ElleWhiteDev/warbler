@@ -28,7 +28,7 @@
         {{ form.password(placeholder="Enter your password to confirm", class="form-control") }}
 
         <div class="edit-btn-area">
-          <button class="btn btn-success">Edit User</button>
+          <button class="btn fbtn-success">Edit User</button>
           <a href="{{url_for('change_password')}}" class="btn btn-primary">Change Password</a>
           <a href="{{url_for('users_show', user_id=g.user.id)}}" class="btn btn-outline-secondary">Cancel</a>
         </div>
