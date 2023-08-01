@@ -30,12 +30,17 @@ Users can update their profiles, change their passwords, and even delete their a
 - Frontend: HTML, CSS, Bootstrap
 
 ## 🚀 Getting Started
-To get Warbler up and running, you'll need Python, pip, PostgreSQL, and a virtual environment (like venv or conda). Follow these steps:
+To get Warbler up and running, you'll need Python, pip, PostgreSQL, and a virtual environment (like venv or conda), and a Google Locations API key. Follow these steps:
 
 1. Clone the repo: git clone https://github.com/yourusername/warbler.git
 2. Change to the app directory: cd warbler
 3. Create and activate a virtual environment
 4. Install requirements: pip install -r requirements.txt
-5. Create a database: createdb warbler
-6. Run the app: flask run
-7. Now, navigate to localhost:5000 in your browser to see Warbler in action!
+5. Create a .env file in the root of the project. This will be used to store your Google Locations API key: touch .env
+6. Open the .env file and add your Google Locations API key as GOOGLE_API_KEY: echo "GOOGLE_API_KEY=your_api_key_here" >> .env
+Make sure to replace your_api_key_here with your actual API key.
+7. Create a database: createdb warbler
+8. Run the app: flask run
+9. Now, navigate to localhost:5000 in your browser to see Warbler in action!
+
+Remember that the .env file should be included in your .gitignore file to ensure that it's not tracked by Git. This way, each user can have their own .env file locally, but it won't be included in the repository when you push changes to GitHub.
