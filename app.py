@@ -16,8 +16,7 @@ CURR_USER_KEY = "curr_user"
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 
-# Get DB_URI from environ variable (useful for production/testing) or,
-# if not set there, use development local db.
+
 app.config['SQLALCHEMY_DATABASE_URI'] = (os.environ.get('DATABASE_URL', 'postgresql:///warbler'))
 # os.environ.get('DATABASE_URL', 'postgresql://super:koneko13@ellewhitedev-13362.postgres.pythonanywhere-services.com/warbler'))
 
@@ -440,11 +439,7 @@ def internal_server_error(e):
     return render_template('500.html'), 500
 
 ##############################################################################
-# Turn off all caching in Flask
-#   (useful for dev; in production, this kind of stuff is typically
-#   handled elsewhere)
-#
-# https://stackoverflow.com/questions/34066804/disabling-caching-in-flask
+
 
 @app.after_request
 def add_header(req):
